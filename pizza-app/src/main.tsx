@@ -12,7 +12,12 @@ import { AuthLayout } from "./layout/Layout/Auth/AuthLayout.tsx";
 import { Login } from "./pages/Login/Login.tsx";
 import { Register } from "./pages/Register/Register.tsx";
 import { RequireAuth } from "./helpers/RequireAuth.tsx";
+import { Provider } from "react-redux";
+import { store } from "./store/store.ts";
+import { Success } from "./pages/Success/Success.tsx";
+
 const Menu = lazy(() => import("./pages/Menu/Menu"));
+
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -21,6 +26,10 @@ const router = createBrowserRouter([
 			{
 				path: "/",
 				element: <Suspense fallback={<>Загрузка...</>}><Menu /></Suspense>
+			},
+			{
+				path: "/success",
+				element: <Success />
 			},
 			{
 				path: "/cart",
@@ -35,7 +44,7 @@ const router = createBrowserRouter([
 						data: new Promise((resolve, reject) => {
 							setTimeout(() => {
 								axios.get(`${PREFIX}/products/${params.id}`).then(data => resolve(data)).catch(e => reject(e));
-							}, 100);
+							}, 2000);
 						})
 					});
 				}
@@ -43,16 +52,15 @@ const router = createBrowserRouter([
 		]
 	},
 	{
-		path:"/auth",
-		element: < AuthLayout/>,
+		path: "/auth",
+		element: <AuthLayout />,
 		children: [
 			{
-				path:"login",
-				element:<Login></Login>
-			},
-			{
-				path:"register",
-				element:<Register></Register>
+				path: "login",
+				element: <Login />
+			}, {
+				path: "register",
+				element: <Register />
 			}
 		]
 	},
@@ -63,6 +71,8 @@ const router = createBrowserRouter([
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
-		<RouterProvider router = {router}></RouterProvider>
+		<Provider store={store}>
+			<RouterProvider router={router} />
+		</Provider>
 	</React.StrictMode>
 );
